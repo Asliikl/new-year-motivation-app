@@ -4,19 +4,14 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Yeni Yıl Mesajı</title>
-  
-  <!-- Google Fonts -->
- <!-- Google Fonts -->
+ 
  <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto+Slab:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   
- <!-- Font Awesome -->
  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
  
- <!-- Modernizr (opsiyonel) -->
  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/3.11.2/modernizr.min.js"></script>
 
  <style>
-    /* GENEL STİL */
     body {
       margin: 0;
       padding: 0;
@@ -33,7 +28,6 @@
       left: 0;
     }
 
-    /* MOTİVASYON MESAJI */
     .motivational-text {
       display: none;
       font-family: "Roboto Slab", serif;
@@ -60,7 +54,6 @@
       to { opacity: 0; }
     }
 
-    /* DEĞİŞİME HAZIR MISIN YAZISI */
     .ready-text {
       display: none;
       position: absolute;
@@ -78,7 +71,6 @@
       50% { opacity: 0.2; }
     }
 
-    /* TODO LİST KUTUSU */
     .todo-container {
       display: none;
       position: fixed;
@@ -141,16 +133,12 @@
   </style>
 </head>
 <body>
-  <!-- Beyaz arka planda kar efekti -->
   <canvas id="snowCanvas"></canvas>
 
-  <!-- Hoş Geldin Mesajı -->
   <div class="motivational-text" id="motivationalMessage"></div>
 
-  <!-- Değişime Hazır Mısın Yazısı -->
   <span class="ready-text" id="readyText">Değişime hazır mısın?</span>
 
-  <!-- To-Do List -->
   <div class="todo-container" id="todoContainer">
     <h3>✨ Hedeflerinle Parlamaya Hazır mısın? ✨</h3>
     <p>Bu yıl hayallerine bir adım daha yaklaşmak için güçlü bir başlangıç yap. 💪</p>
@@ -219,14 +207,12 @@
       snowflakes = [];
     }
 
-    /* Hoş Geldin Mesajı */
     setTimeout(() => {
       const motivationalMessage = document.getElementById("motivationalMessage");
       motivationalMessage.style.display = "block";
       motivationalMessage.textContent = "Hoş Geldin 2025! Yepyeni bir yıl seni bekliyor.";
     }, 1000);
 
-    /* 5 saniye sonra Hoş Geldin mesajını gizle ve Değişime Hazır Mısın göster */
     setTimeout(() => {
       const motivationalMessage = document.getElementById("motivationalMessage");
       motivationalMessage.style.animation = "fadeOut 1s forwards";
@@ -234,26 +220,21 @@
       setTimeout(() => {
         motivationalMessage.style.display = "none";
 
-        // Arka planı siyaha geçir
         document.body.style.background = "#000";
         document.body.style.color = "#fff";
 
-        // "Değişime hazır mısın?" yazısını göster
         document.getElementById("readyText").style.display = "block";
       }, 1000);
     }, 5000);
 
-    /* "Değişime hazır mısın?" 5 saniye sonra gizle ve To-Do List göster */
     setTimeout(() => {
       document.getElementById("readyText").style.display = "none";
-      stopSnow(); // Kar efektini durdur
+      stopSnow(); 
       document.getElementById("todoContainer").style.display = "block";
     }, 11000);
 
-    // Kar efektini başlat
     startSnow();
 
-    /* To-Do List */
     const todoInput = document.getElementById("todoInput");
     const todoList = document.getElementById("todoList");
 
