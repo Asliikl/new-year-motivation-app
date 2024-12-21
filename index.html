@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Yeni Yıl Mesajı</title>
+  
+  <!-- Google Fonts -->
+ <!-- Google Fonts -->
+ <link href="https://fonts.googleapis.com/css2?family=Lobster&family=Roboto+Slab:wght@400;700&family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  
+ <!-- Font Awesome -->
+ <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" />
+ 
+ <!-- Modernizr (opsiyonel) -->
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/3.11.2/modernizr.min.js"></script>
+
+ <style>
+    /* GENEL STİL */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background: #fff;
+      color: #000;
+      font-family: "Poppins", sans-serif;
+      transition: background 1s ease-in-out;
+    }
+
+    canvas {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+
+    /* MOTİVASYON MESAJI */
+    .motivational-text {
+      display: none;
+      font-family: "Roboto Slab", serif;
+      font-size: 3rem;
+      text-align: center;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      z-index: 10;
+      background: linear-gradient(45deg, #b0bec5, #64b5f6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: popIn 2s ease-in forwards;
+    }
+    @keyframes popIn {
+      0% { transform: translate(-50%, -50%) scale(0); opacity: 0; }
+      70% { transform: translate(-50%, -50%) scale(1.2); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); }
+    }
+
+    @keyframes fadeOut {
+      from { opacity: 1; }
+      to { opacity: 0; }
+    }
+
+    /* DEĞİŞİME HAZIR MISIN YAZISI */
+    .ready-text {
+      display: none;
+      position: absolute;
+      top: 65%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-family: "Poppins", sans-serif;
+      font-size: 1.5rem;
+      color: #ff6a85;
+      z-index: 10;
+      animation: flash 1s infinite;
+    }
+    @keyframes flash {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.2; }
+    }
+
+    /* TODO LİST KUTUSU */
+    .todo-container {
+      display: none;
+      position: fixed;
+      top: 20%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      width: 400px;
+      padding: 30px;
+      box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+      font-family: "Poppins", sans-serif;
+      border-radius: 10px;
+      text-align: center;
+      z-index: 20;
+      animation: slideUp 0.8s ease-in-out forwards;
+    }
+    @keyframes slideUp {
+      0% { transform: translate(-50%, 60%); opacity: 0; }
+      100% { transform: translate(-50%, 0); opacity: 1; }
+    }
+    .todo-container input {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #555;
+      border-radius: 4px;
+      font-size: 1rem;
+      color: white;
+      background: transparent;
+    }
+    .todo-container ul {
+      list-style: none;
+      padding: 0;
+      margin: 10px 0;
+      text-align: left;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+    .todo-container ul li {
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.1);
+      margin: 5px 0;
+      border-radius: 4px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .todo-container ul li button {
+      border: none;
+      background: #ff6a85;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    .todo-container ul li button:hover {
+      background: #ff4a65;
+    }
+  </style>
+</head>
+<body>
+  <!-- Beyaz arka planda kar efekti -->
+  <canvas id="snowCanvas"></canvas>
+
+  <!-- Hoş Geldin Mesajı -->
+  <div class="motivational-text" id="motivationalMessage"></div>
+
+  <!-- Değişime Hazır Mısın Yazısı -->
+  <span class="ready-text" id="readyText">Değişime hazır mısın?</span>
+
+  <!-- To-Do List -->
+  <div class="todo-container" id="todoContainer">
+    <h3>✨ Hedeflerinle Parlamaya Hazır mısın? ✨</h3>
+    <p>Bu yıl hayallerine bir adım daha yaklaşmak için güçlü bir başlangıç yap. 💪</p>
+    <input type="text" id="todoInput" placeholder="Hedeflerini yaz, hayallerine ulaş!"/>
+    <ul id="todoList"></ul>
+  </div>
+
+  <script>
+    const canvas = document.getElementById("snowCanvas");
+    const ctx = canvas.getContext("2d");
+
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const snowflakeImage = new Image();
+    snowflakeImage.src = "kar.png";
+
+    let snowflakes = [];
+
+    function createSnowflake() {
+      return {
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        size: Math.random() * 20 + 5,
+        speed: Math.random() * 0.5 + 0.2,
+        opacity: Math.random() * 0.8 + 0.2,
+      };
+    }
+
+    function createSnowflakes(count) {
+      for (let i = 0; i < count; i++) {
+        snowflakes.push(createSnowflake());
+      }
+    }
+
+    function drawSnowflake(snowflake) {
+      ctx.globalAlpha = snowflake.opacity;
+      ctx.drawImage(snowflakeImage, snowflake.x, snowflake.y, snowflake.size, snowflake.size);
+      ctx.globalAlpha = 1.0;
+    }
+
+    function updateSnowflake(snowflake) {
+      snowflake.y += snowflake.speed;
+      if (snowflake.y > canvas.height) {
+        snowflake.y = -snowflake.size;
+        snowflake.x = Math.random() * canvas.width;
+      }
+    }
+
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      snowflakes.forEach((snowflake) => {
+        drawSnowflake(snowflake);
+        updateSnowflake(snowflake);
+      });
+      requestAnimationFrame(animate);
+    }
+
+    function startSnow() {
+      createSnowflakes(100);
+      animate();
+    }
+
+    function stopSnow() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      snowflakes = [];
+    }
+
+    /* Hoş Geldin Mesajı */
+    setTimeout(() => {
+      const motivationalMessage = document.getElementById("motivationalMessage");
+      motivationalMessage.style.display = "block";
+      motivationalMessage.textContent = "Hoş Geldin 2025! Yepyeni bir yıl seni bekliyor.";
+    }, 1000);
+
+    /* 5 saniye sonra Hoş Geldin mesajını gizle ve Değişime Hazır Mısın göster */
+    setTimeout(() => {
+      const motivationalMessage = document.getElementById("motivationalMessage");
+      motivationalMessage.style.animation = "fadeOut 1s forwards";
+
+      setTimeout(() => {
+        motivationalMessage.style.display = "none";
+
+        // Arka planı siyaha geçir
+        document.body.style.background = "#000";
+        document.body.style.color = "#fff";
+
+        // "Değişime hazır mısın?" yazısını göster
+        document.getElementById("readyText").style.display = "block";
+      }, 1000);
+    }, 5000);
+
+    /* "Değişime hazır mısın?" 5 saniye sonra gizle ve To-Do List göster */
+    setTimeout(() => {
+      document.getElementById("readyText").style.display = "none";
+      stopSnow(); // Kar efektini durdur
+      document.getElementById("todoContainer").style.display = "block";
+    }, 11000);
+
+    // Kar efektini başlat
+    startSnow();
+
+    /* To-Do List */
+    const todoInput = document.getElementById("todoInput");
+    const todoList = document.getElementById("todoList");
+
+    todoInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter" && todoInput.value.trim() !== "") {
+        const li = document.createElement("li");
+        li.textContent = todoInput.value;
+
+        const deleteBtn = document.createElement("button");
+        deleteBtn.textContent = "Sil";
+        deleteBtn.addEventListener("click", () => li.remove());
+
+        li.appendChild(deleteBtn);
+        todoList.appendChild(li);
+        todoInput.value = "";
+      }
+    });
+  </script>
+</body>
+</html>
